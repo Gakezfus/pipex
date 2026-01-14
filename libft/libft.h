@@ -113,7 +113,7 @@ unsigned int	ft_idim(int x, int y);
 void			ft_set_zero(int num, ...);
 
 // Replaced str_1 with a string of str_1 and str_2 combined. Returns 1 if
-// malloc fails. str_1 MUST be freeable.
+// malloc fails, or str_1 or str_2 is NULL, else 0. str_1 MUST be freeable.
 int				ft_merge_strings(char **str_1, char *str_2);
 
 // Returns an array of elements contained in the linked list that can be freed.

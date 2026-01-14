@@ -41,7 +41,7 @@ char	**ft_split(char const *str, char c)
 	if (!str || !*str)
 		return (NULL);
 	str_count = ft_count_str(str, c);
-	to_return = malloc((str_count + 1) * sizeof(char *));
+	to_return = ft_calloc(str_count + 1, sizeof(char *));
 	if (to_return == NULL)
 		return (NULL);
 	if (ft_all_str(to_return, str, c, str_count))

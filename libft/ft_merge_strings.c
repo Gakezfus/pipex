@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_merge_strings.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elkan <elkan@student.42.fr>                +#+  +:+       +#+        */
+/*   By: Elkan Choo <echoo@42mail.sutd.edu.sg>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/02 18:13:03 by elkan             #+#    #+#             */
-/*   Updated: 2026/01/02 21:24:23 by elkan            ###   ########.fr       */
+/*   Updated: 2026/01/14 15:18:31 by Elkan Choo       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ int	ft_merge_strings(char **str_1, char *str_2)
 	int		str_1_len;
 	int		str_2_len;
 
+	if (*str_1 == NULL || str_2 == NULL)
+		return (1);
 	str_1_len = ft_strlen(*str_1);
 	str_2_len = ft_strlen(str_2);
 	dup = malloc(str_1_len + str_2_len + 1);
