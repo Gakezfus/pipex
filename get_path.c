@@ -6,7 +6,7 @@
 /*   By: elkan <elkan@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 13:53:28 by Elkan Choo        #+#    #+#             */
-/*   Updated: 2026/01/15 22:08:35 by elkan            ###   ########.fr       */
+/*   Updated: 2026/01/15 23:21:17 by elkan            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ char	*get_path2(char *cmd, char *envp[])
 		{
 			if (access(to_return, X_OK) == 0)
 				return (to_return);
-			dprintf(2, "%s: Permission denied\n", cmd);
+			perror(cmd);
 			exit(126);
 		}
 		free(to_return);
