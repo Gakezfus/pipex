@@ -79,6 +79,15 @@ int				ft_prt_hex(char c, uintptr_t num, int *count);
 void			ft_utohextoa(uintptr_t num, char *string, char *base);
 char			*ft_utoa(unsigned int n);
 
+// ft_dprintf
+int				ft_dprtchar(int fd, char c, va_list *ap, int *count);
+int				ft_dprintf(int fd, const char *s, ...);
+int				ft_dprtnbr(int fd, int n, int *count);
+int				ft_dprtptr(int fd, va_list *ap, int *count, char c);
+int				ft_dprtstr(int fd, char *s, int *count);
+int				ft_dprtuint(int fd, unsigned int n, int *count);
+int				ft_dprt_hex(int fd, char c, uintptr_t num, int *count);
+
 // GNL
 // GNL returns NULL if EOF or if an error occurs. So, GNL cannot detect errors
 # ifndef BUFFER_SIZE
@@ -116,6 +125,11 @@ void			ft_set_zero(int num, ...);
 // malloc fails, or str_1 or str_2 is NULL, else 0. str_1 MUST be freeable.
 int				ft_merge_strings(char **str_1, char *str_2);
 
+// Does the same as merge strings, but merges up to 10 strings (can increase
+// if I really want to, but I probably won't need to). Takes the strings as
+// variadic variables, thus the var name
+int				ft_merge_strings_var(char **str_1, int str_count, ...);
+
 // Returns an array of elements contained in the linked list that can be freed.
 // So, if content points to an int, this will return an array of all ints in
 // the linked list
@@ -126,5 +140,9 @@ void			ft_flush(int fd);
 
 // Fully frees an array[][]. Array MUST be NULL terminated
 void			ft_free_arrays(void **array);
+
+// Now evaluates each character in a given formula, so that split conditions
+// can be more easily customised
+char			**ft_split_f(char const *str, int (is_sep)(char));
 
 #endif

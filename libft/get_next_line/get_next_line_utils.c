@@ -14,6 +14,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "libft.h"
+
 char	*calc_return(int n_eof, char *buf)
 {
 	if (n_eof > 0)

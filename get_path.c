@@ -6,7 +6,7 @@
 /*   By: elkan <elkan@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 13:53:28 by Elkan Choo        #+#    #+#             */
-/*   Updated: 2026/01/14 21:02:09 by elkan            ###   ########.fr       */
+/*   Updated: 2026/01/15 22:08:35 by elkan            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ char	*get_path(char *cmd, char *envp[])
 
 	if (ft_strchr(cmd, '/'))
 	{
-		to_return = ft_calloc(1, ft_strlen(cmd) + 1);
+		to_return = ft_strdup(cmd);
 		if (to_return == NULL)
 		{
 			write(2, "pipex: ", 7);
@@ -51,27 +51,29 @@ char	*get_path2(char *cmd, char *envp[])
 
 	index = 0;
 	while (ft_strncmp(envp[index], "PATH=/", 6))
-	{
 		index++;
-	}
 	path = ft_split(envp[index] + 5, ':');
 	index = 0;
 	while (path[index])
 	{
 		to_return = ft_strdup(path[index]);
-		ft_merge_strings(&to_return, "/");
-		if (ft_merge_strings(&to_return, cmd))
+		if (ft_merge_strings_var(&to_return, 2, "/", cmd))
 		{
 			write(2, "pipex: ", 7);
 			perror("ft_merge_strings");
 			exit(1);
 		}
-		if (access(to_return, X_OK) == 0)
-		return (to_return);
+		if (!access(to_return, F_OK))
+		{
+			if (access(to_return, X_OK) == 0)
+				return (to_return);
+			dprintf(2, "%s: Permission denied\n", cmd);
+			exit(126);
+		}
 		free(to_return);
 		index++;
 	}
-	write(2, "pipex: ", 7);
-	perror(cmd);
-	exit(1);
+	dprintf(2, "%s: command not found\n", cmd);
+	exit(127);
+	return (NULL);
 }
