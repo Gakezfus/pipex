@@ -6,7 +6,7 @@
 /*   By: elkan <elkan@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 12:57:56 by elkan             #+#    #+#             */
-/*   Updated: 2026/01/15 21:53:03 by elkan            ###   ########.fr       */
+/*   Updated: 2026/01/16 01:07:50 by elkan            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ char	*first_word(char *str, int (is_sep)(char));
 int		is_sep(char c);
 int		open_file1(char *argv[], int *fail);
 int		open_file2(char *argv[], int *error, int *fail);
+void	free_all(char *path, char **cmds);
 
 char	*first_word(char *str, int (is_sep)(char))
 {
@@ -70,4 +71,18 @@ int	open_file2(char *argv[], int *error, int *fail)
 		perror(argv[4]);
 	}
 	return (to_return);
+}
+
+void	free_all(char *path, char **cmds)
+{
+	int	index;
+
+	free(path);
+	index = 0;
+	while (cmds[index])
+	{
+		free(cmds[index]);
+		index++;
+	}
+	free(cmds);
 }

@@ -6,7 +6,7 @@
 #    By: elkan <elkan@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/12 21:52:11 by elkan             #+#    #+#              #
-#    Updated: 2026/01/14 21:03:30 by elkan            ###   ########.fr        #
+#    Updated: 2026/01/16 01:03:10 by elkan            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ NAME = pipex
 
 LIBFT = libft/libft.a
 
-CFLAGS = -Wall -Wextra -Werror -Ilibft
+CFLAGS = -Wall -Wextra -Werror -Ilibft -g
 
 all: $(NAME)
 
@@ -27,6 +27,9 @@ $(NAME): $(OBJECTS) $(LIBFT) pipex.h
 
 $(LIBFT):
 	make -C libft
+
+src: $(SOURCES)
+	echo $(SOURCES)
 
 %.o: %.c
 	cc $(CFLAGS) -c $< -o $@

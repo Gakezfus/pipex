@@ -6,7 +6,7 @@
 /*   By: elkan <elkan@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/13 17:38:33 by elkan             #+#    #+#             */
-/*   Updated: 2026/01/15 22:32:15 by elkan            ###   ########.fr       */
+/*   Updated: 2026/01/16 01:03:57 by elkan            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,10 +65,10 @@ pid_t	child_1(char *cmd, char *envp[], int pip[2], int file1_fd)
 	char	*path;
 	char	**cmds;
 
-	path = get_path(first_word(cmd, is_sep), envp);
 	child = fork();
 	if (child == 0)
 	{
+		path = get_path(first_word(cmd, is_sep), envp);
 		dup2(file1_fd, 0);
 		dup2(pip[1], 1);
 		close(file1_fd);
@@ -82,7 +82,8 @@ pid_t	child_1(char *cmd, char *envp[], int pip[2], int file1_fd)
 			exit (1);
 		}
 		execve(path, cmds, envp);
-		perror("child1");
+		perror("execve");
+		free(path);
 		exit (1);
 	}
 	return (child);
@@ -94,10 +95,10 @@ pid_t	child_2(char *cmd, char *envp[], int pip[2], int file2_fd)
 	char	*path;
 	char	**cmds;
 
-	path = get_path(first_word(cmd, is_sep), envp);
 	child = fork();
 	if (child == 0)
 	{
+		path = get_path(first_word(cmd, is_sep), envp);
 		dup2(pip[0], 0);
 		dup2(file2_fd, 1);
 		close(file2_fd);
@@ -111,7 +112,8 @@ pid_t	child_2(char *cmd, char *envp[], int pip[2], int file2_fd)
 			exit (1);
 		}
 		execve(path, cmds, envp);
-		perror("child2");
+		perror("execve");
+		free(path);
 		exit (1);
 	}
 	return (child);
