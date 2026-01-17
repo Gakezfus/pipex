@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_path.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Elkan Choo <echoo@42mail.sutd.edu.sg>      +#+  +:+       +#+        */
+/*   By: elkan <elkan@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 13:53:28 by Elkan Choo        #+#    #+#             */
-/*   Updated: 2026/01/16 14:53:50 by Elkan Choo       ###   ########.fr       */
+/*   Updated: 2026/01/17 17:03:20 by elkan            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,15 +60,15 @@ char	*get_path2(char *cmd, char *envp[])
 		if (!access(to_return, F_OK))
 		{
 			if (access(to_return, X_OK) == 0)
-				return (to_return);
+				return (ft_free_arrays((void **)path), to_return);
 			perror(cmd);
 			exit(126);
 		}
 		free(to_return);
 	}
 	dprintf(2, "%s: command not found\n", cmd);
+	free_all(cmd, path, NULL);
 	exit(127);
-	return (NULL);
 }
 
 void	make_full_path(char **to_return, char *path, char *cmd)

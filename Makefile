@@ -6,11 +6,11 @@
 #    By: elkan <elkan@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/12 21:52:11 by elkan             #+#    #+#              #
-#    Updated: 2026/01/16 01:03:10 by elkan            ###   ########.fr        #
+#    Updated: 2026/01/17 17:16:27 by elkan            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-SOURCES = $(wildcard *.c)
+SOURCES = get_path.c pipex.c pipex_utils.c
 
 OBJECTS = $(SOURCES:%.c=%.o)
 
@@ -27,9 +27,6 @@ $(NAME): $(OBJECTS) $(LIBFT) pipex.h
 
 $(LIBFT):
 	make -C libft
-
-src: $(SOURCES)
-	echo $(SOURCES)
 
 %.o: %.c
 	cc $(CFLAGS) -c $< -o $@

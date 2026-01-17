@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipex.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: Elkan Choo <echoo@42mail.sutd.edu.sg>      +#+  +:+       +#+        */
+/*   By: elkan <elkan@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/13 17:38:33 by elkan             #+#    #+#             */
-/*   Updated: 2026/01/16 15:07:34 by Elkan Choo       ###   ########.fr       */
+/*   Updated: 2026/01/17 17:14:06 by elkan            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,45 +19,41 @@
 #include <fcntl.h>
 #include <sys/wait.h>
 
-void	setup(int argc, char *argv[], int *file1_fd, int *file2_fd);
-char	**setup_cmds(char *cmd, int (is_sep)(char), char *path);
+void	setup(int argc, char *argv[], t_pars *pars);
+char	**setup_cmds(char *cmd, int (is_sep)(char), char *path, char *cmd_word);
 pid_t	child_1(char *cmd, char *envp[], int pip[2], int file1_fd);
 pid_t	child_2(char *cmd, char *envp[], int pip[2], int file2_fd);
 
 int	main(int argc, char *argv[], char *envp[])
 {
-	int		file1_fd;
-	int		file2_fd;
-	int		pip[2];
-	pid_t	child1_pid;
-	pid_t	child2_pid;
+	t_pars	pars;
 
-	setup(argc, argv, &file1_fd, &file2_fd);
-	pipe(pip);
-	child1_pid = child_1(argv[2], envp, pip, file1_fd);
-	child2_pid = child_2(argv[3], envp, pip, file2_fd);
-	close(pip[0]);
-	close(pip[1]);
-	waitpid(child1_pid, &file1_fd, 0);
-	waitpid(child2_pid, &file2_fd, 0);
+	setup(argc, argv, &pars);
+	pipe(pars.pip);
+	pars.child1_pid = child_1(argv[2], envp, pars.pip, pars.file1_fd);
+	pars.child2_pid = child_2(argv[3], envp, pars.pip, pars.file2_fd);
+	close(pars.pip[0]);
+	close(pars.pip[1]);
+	waitpid(pars.child1_pid, &pars.child_1_status, 0);
+	waitpid(pars.child2_pid, &pars.child_2_status, 0);
+	if (WIFEXITED(pars.child_2_status))
+	{
+		if (WEXITSTATUS(pars.child_2_status))
+			pars.error = WEXITSTATUS(pars.child_2_status);
+	}
+	return (pars.error);
 }
 
-void	setup(int argc, char *argv[], int *file1_fd, int *file2_fd)
+void	setup(int argc, char *argv[], t_pars *pars)
 {
-	int	error;
-	int	fail;
-
-	error = 0;
-	fail = 0;
+	pars->error = 0;
 	if (argc != 5)
 	{
 		write(2, "Usage: ./pipex file1 cmd1 cmd2 file2\n", 37);
 		exit (1);
 	}
-	*file2_fd = open_file2(argv, &error, &fail);
-	*file1_fd = open_file1(argv, &fail);
-	if (fail)
-		exit (error);
+	pars->file2_fd = open_file2(argv, pars);
+	pars->file1_fd = open_file1(argv);
 }
 
 pid_t	child_1(char *cmd, char *envp[], int pip[2], int file1_fd)
@@ -65,17 +61,19 @@ pid_t	child_1(char *cmd, char *envp[], int pip[2], int file1_fd)
 	pid_t	child;
 	char	*path;
 	char	**cmds;
+	char	*cmd_word;
 
 	child = fork();
 	if (child == 0)
 	{
-		path = get_path(first_word(cmd, is_sep), envp);
+		cmd_word = first_word(cmd, is_sep);
+		path = get_path(cmd_word, envp);
 		dup2(file1_fd, 0);
 		dup2(pip[1], 1);
 		close(file1_fd);
 		close(pip[1]);
 		close(pip[0]);
-		cmds = setup_cmds(cmd, is_sep, path);
+		cmds = setup_cmds(cmd, is_sep, path, cmd_word);
 		execve(path, cmds, envp);
 		perror("execve");
 		free(path);
@@ -89,17 +87,19 @@ pid_t	child_2(char *cmd, char *envp[], int pip[2], int file2_fd)
 	pid_t	child;
 	char	*path;
 	char	**cmds;
+	char	*cmd_word;
 
 	child = fork();
 	if (child == 0)
 	{
-		path = get_path(first_word(cmd, is_sep), envp);
+		cmd_word = first_word(cmd, is_sep);
+		path = get_path(cmd_word, envp);
 		dup2(pip[0], 0);
 		dup2(file2_fd, 1);
 		close(file2_fd);
 		close(pip[0]);
 		close(pip[1]);
-		cmds = setup_cmds(cmd, is_sep, path);
+		cmds = setup_cmds(cmd, is_sep, path, cmd_word);
 		execve(path, cmds, envp);
 		perror("execve");
 		free(path);
@@ -108,15 +108,14 @@ pid_t	child_2(char *cmd, char *envp[], int pip[2], int file2_fd)
 	return (child);
 }
 
-char	**setup_cmds(char *cmd, int (is_sep)(char), char *path)
+char	**setup_cmds(char *cmd, int (is_sep)(char), char *path, char *cmd_word)
 {
 	char	**cmds;
 
 	cmds = ft_split_f(cmd, is_sep);
 	if (cmds == NULL)
 	{
-		free(path);
-		perror("ft_split_f");
+		free_all(path, cmds, cmd_word);
 		exit (1);
 	}
 	return (cmds);
