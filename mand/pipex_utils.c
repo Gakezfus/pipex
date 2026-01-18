@@ -6,7 +6,7 @@
 /*   By: elkan <elkan@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 12:57:56 by elkan             #+#    #+#             */
-/*   Updated: 2026/01/18 18:28:32 by elkan            ###   ########.fr       */
+/*   Updated: 2026/01/17 17:00:08 by elkan            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,10 +61,7 @@ int	open_file2(char *argv[], t_pars *pars)
 {
 	int	to_return;
 
-	if (pars->here_doc)
-		to_return = open(argv[5], O_WRONLY | O_CREAT | O_APPEND, 0666);
-	else
-		to_return = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0666);
+	to_return = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (to_return < 0)
 	{
 		pars->error = 1;

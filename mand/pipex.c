@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: elkan <elkan@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/18 16:04:46 by elkan             #+#    #+#             */
-/*   Updated: 2026/01/18 19:13:55 by elkan            ###   ########.fr       */
+/*   Created: 2026/01/13 17:38:33 by elkan             #+#    #+#             */
+/*   Updated: 2026/01/17 17:14:06 by elkan            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,26 +22,16 @@
 void	setup(int argc, char *argv[], t_pars *pars);
 char	**setup_cmds(char *cmd, int (is_sep)(char), char *path, char *cmd_word);
 pid_t	child_1(char *cmd, char *envp[], int pip[2], int file1_fd);
-pid_t	child_last(char *cmd, char *envp[], int pip[2], int file2_fd);
+pid_t	child_2(char *cmd, char *envp[], int pip[2], int file2_fd);
 
 int	main(int argc, char *argv[], char *envp[])
 {
 	t_pars	pars;
 
 	setup(argc, argv, &pars);
-	if (pipe(pars.pip))
-	{
-		perror("pipe");
-		return (1);
-	}
-	par->extra_count = argc - pars->here_doc - 5
-	if (par->extra_count)
-		setup_extra(argc, argv, &pars);
-	pars.child1_pid = child_1(argv[2 + pars.here_doc],
-			envp, pars.pip, pars.file1_fd);
-	extra_commands(argc, argv, &pars);
-	pars.child2_pid = child_last(argv[3 + pars.here_doc],
-			envp, pars.pip, pars.file2_fd);
+	pipe(pars.pip);
+	pars.child1_pid = child_1(argv[2], envp, pars.pip, pars.file1_fd);
+	pars.child2_pid = child_2(argv[3], envp, pars.pip, pars.file2_fd);
 	close(pars.pip[0]);
 	close(pars.pip[1]);
 	waitpid(pars.child1_pid, &pars.child_1_status, 0);
@@ -57,26 +47,13 @@ int	main(int argc, char *argv[], char *envp[])
 void	setup(int argc, char *argv[], t_pars *pars)
 {
 	pars->error = 0;
-	if (ft_strncmp(argv[1], "here_doc", 9))
-		pars->here_doc = 0;
-	else
-		pars->here_doc = 1;
-	if (!pars->here_doc && argc < 5)
+	if (argc != 5)
 	{
-		write(2, "Usage: ./pipex file1 first_cmd ... last_cmd file2\n", 50);
-		exit (1);
-	}
-	else if (pars->here_doc && argc < 6)
-	{
-		write(2, "Usage: ./pipex here_doc LIMITER
-			first_cmd ... last_cmd file2\n", 50);
+		write(2, "Usage: ./pipex file1 cmd1 cmd2 file2\n", 37);
 		exit (1);
 	}
 	pars->file2_fd = open_file2(argv, pars);
-	if (pars->here_doc)
-		pars->file1_fd = get_heredoc(argv[2]);
-	else
-		pars->file1_fd = open_file1(argv);
+	pars->file1_fd = open_file1(argv);
 }
 
 pid_t	child_1(char *cmd, char *envp[], int pip[2], int file1_fd)
@@ -105,7 +82,7 @@ pid_t	child_1(char *cmd, char *envp[], int pip[2], int file1_fd)
 	return (child);
 }
 
-pid_t	child_last(char *cmd, char *envp[], int pip[2], int file2_fd)
+pid_t	child_2(char *cmd, char *envp[], int pip[2], int file2_fd)
 {
 	pid_t	child;
 	char	*path;

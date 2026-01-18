@@ -6,7 +6,7 @@
 /*   By: elkan <elkan@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 16:16:20 by Elkan Choo        #+#    #+#             */
-/*   Updated: 2026/01/18 19:00:05 by elkan            ###   ########.fr       */
+/*   Updated: 2026/01/17 17:00:25 by elkan            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,6 @@ typedef struct pararms
 	int		file2_fd;
 	int		pip[2];
 	int		error;
-	int		here_doc;
-	int		*extra_pipes[2];
-	pid_t	*extra_pid;
-	pid_t	*extra_status;
 	pid_t	child1_pid;
 	pid_t	child2_pid;
 	pid_t	child_1_status;
@@ -40,8 +36,5 @@ int		is_sep(char c);
 int		open_file1(char *argv[]);
 int		open_file2(char *argv[], t_pars *pars);
 void	free_all(char *path, char **cmds, char *cmd_word);
-
-// from get_heredoc.c
-int		get_heredoc(char *limiter);
 
 #endif
