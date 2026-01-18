@@ -6,7 +6,7 @@
 /*   By: elkan <elkan@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/13 17:38:33 by elkan             #+#    #+#             */
-/*   Updated: 2026/01/17 17:14:06 by elkan            ###   ########.fr       */
+/*   Updated: 2026/01/18 23:31:23 by elkan            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include <sys/wait.h>
 
 void	setup(int argc, char *argv[], t_pars *pars);
-char	**setup_cmds(char *cmd, int (is_sep)(char), char *path, char *cmd_word);
+char	**cmd_array(char *cmd, int (is_sep)(char), char *path, char *cmd_word);
 pid_t	child_1(char *cmd, char *envp[], int pip[2], int file1_fd);
 pid_t	child_2(char *cmd, char *envp[], int pip[2], int file2_fd);
 
@@ -73,7 +73,7 @@ pid_t	child_1(char *cmd, char *envp[], int pip[2], int file1_fd)
 		close(file1_fd);
 		close(pip[1]);
 		close(pip[0]);
-		cmds = setup_cmds(cmd, is_sep, path, cmd_word);
+		cmds = cmd_array(cmd, is_sep, path, cmd_word);
 		execve(path, cmds, envp);
 		perror("execve");
 		free(path);
@@ -99,7 +99,7 @@ pid_t	child_2(char *cmd, char *envp[], int pip[2], int file2_fd)
 		close(file2_fd);
 		close(pip[0]);
 		close(pip[1]);
-		cmds = setup_cmds(cmd, is_sep, path, cmd_word);
+		cmds = cmd_array(cmd, is_sep, path, cmd_word);
 		execve(path, cmds, envp);
 		perror("execve");
 		free(path);
@@ -108,7 +108,7 @@ pid_t	child_2(char *cmd, char *envp[], int pip[2], int file2_fd)
 	return (child);
 }
 
-char	**setup_cmds(char *cmd, int (is_sep)(char), char *path, char *cmd_word)
+char	**cmd_array(char *cmd, int (is_sep)(char), char *path, char *cmd_word)
 {
 	char	**cmds;
 

@@ -6,7 +6,7 @@
 /*   By: elkan <elkan@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 12:57:56 by elkan             #+#    #+#             */
-/*   Updated: 2026/01/18 18:28:32 by elkan            ###   ########.fr       */
+/*   Updated: 2026/01/19 01:21:19 by elkan            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@
 
 char	*first_word(char *str, int (is_sep)(char));
 int		is_sep(char c);
-int		open_file1(char *argv[]);
+int		open_file1(char *argv[], t_pars *pars);
 int		open_file2(char *argv[], t_pars *pars);
-void	free_all(char *path, char **cmds, char *cmd_word);
+void	free_all(char *path, char **cmds, char *cmd_word, t_pars *pars);
 
 char	*first_word(char *str, int (is_sep)(char))
 {
@@ -44,11 +44,11 @@ int	is_sep(char c)
 	return (c == ' ' || c == '\t' || c == '\n');
 }
 
-int	open_file1(char *argv[])
+int	open_file1(char *argv[], t_pars *pars)
 {
 	int	to_return;
 
-	to_return = open(argv[1], O_RDONLY);
+	to_return = open(argv[1 + pars->here_doc], O_RDONLY);
 	if (to_return < 0)
 	{
 		write(2, "pipex: ", 7);
@@ -74,9 +74,14 @@ int	open_file2(char *argv[], t_pars *pars)
 	return (to_return);
 }
 
-void	free_all(char *path, char **cmds, char *cmd_word)
+void	free_all(char *path, char **cmds, char *cmd_word, t_pars *pars)
 {
 	free(path);
 	free(cmd_word);
 	ft_free_arrays((void **)cmds);
+	if (pars && pars->cmd_count)
+	{
+		free(pars->pipes);
+		free(pars->cmd_pid);
+	}
 }

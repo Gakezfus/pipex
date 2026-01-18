@@ -6,13 +6,13 @@
 #    By: elkan <elkan@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/12 21:52:11 by elkan             #+#    #+#              #
-#    Updated: 2026/01/18 18:01:25 by elkan            ###   ########.fr        #
+#    Updated: 2026/01/19 03:06:54 by elkan            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 # SOURCES = $(addprefix mand/, get_path.c pipex.c pipex_utils.c)
 
-SOURCES = get_path.c pipex.c pipex_utils.c get_heredoc.c
+SOURCES = get_path.c pipex.c pipex_utils.c get_heredoc.c commands.c
 
 OBJECTS = $(SOURCES:%.c=%.o)
 
@@ -20,7 +20,7 @@ NAME = pipex
 
 LIBFT = libft/libft.a
 
-CFLAGS = -Wall -Wextra -Werror -Ilibft -I.
+CFLAGS = -Wall -Wextra -Werror -Ilibft -I. -g
 
 all: $(NAME)
 
