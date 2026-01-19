@@ -6,7 +6,7 @@
 /*   By: elkan <elkan@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 16:04:46 by elkan             #+#    #+#             */
-/*   Updated: 2026/01/19 13:38:01 by elkan            ###   ########.fr       */
+/*   Updated: 2026/01/19 16:29:59 by elkan            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ int	main(int argc, char *argv[], char *envp[])
 			return (free_all(NULL, NULL, NULL, &pars), 1);
 		index++;
 	}
-	other_commands(argv, &pars);
+	commands(argv, &pars);
 	if (WIFEXITED(pars.last_cmd_status))
 	{
 		if (WEXITSTATUS(pars.last_cmd_status))
@@ -53,24 +53,24 @@ int	main(int argc, char *argv[], char *envp[])
 
 void	setup(int argc, char *argv[], char *envp[], t_pars *pars)
 {
+	if (argc < 5)
+	{
+		write(2, "Usage: ./pipex file1 first_cmd ... last_cmd file2\n", 50);
+		exit (1);
+	}
 	pars->envp = envp;
 	pars->error = 0;
 	if (ft_strncmp(argv[1], "here_doc", 9))
 		pars->here_doc = 0;
 	else
 		pars->here_doc = 1;
-	pars->cmd_count = argc - 3 - pars->here_doc;
-	if (!pars->here_doc && argc < 5)
-	{
-		write(2, "Usage: ./pipex file1 first_cmd ... last_cmd file2\n", 50);
-		exit (1);
-	}
-	else if (pars->here_doc && argc < 6)
+	if (pars->here_doc && argc < 6)
 	{
 		write(2, "Usage: ./pipex here_doc LIMITER first_cmd ...\
 			last_cmd file2\n", 50);
 		exit (1);
 	}
+	pars->cmd_count = argc - 3 - pars->here_doc;
 	pars->file2_fd = open_file2(argc, argv, pars);
 	if (pars->here_doc)
 		pars->file1_fd = get_heredoc(argv[2]);
@@ -86,7 +86,7 @@ char	**cmd_array(char *cmd, char *path, char *cmd_word, t_pars *pars)
 	cmds = ft_split_f(cmd, pars->is_sep);
 	if (cmds == NULL)
 	{
-		free_all(path, cmds, cmd_word, NULL);
+		free_all(path, cmds, cmd_word, pars);
 		exit (1);
 	}
 	return (cmds);

@@ -6,7 +6,7 @@
 /*   By: elkan <elkan@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 16:16:20 by Elkan Choo        #+#    #+#             */
-/*   Updated: 2026/01/19 13:39:43 by elkan            ###   ########.fr       */
+/*   Updated: 2026/01/19 16:29:52 by elkan            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,6 @@ int		get_heredoc(char *limiter);
 // from commands.c
 pid_t	first_cmd(char *cmd, int read, int write, t_pars *pars);
 pid_t	command(char *cmd, int read[2], int write, t_pars *pars);
-void	other_commands(char *argv[], t_pars *pars);
+void	commands(char *argv[], t_pars *pars);
 
 #endif
