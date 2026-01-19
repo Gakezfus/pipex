@@ -6,7 +6,7 @@
 /*   By: elkan <elkan@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 16:04:46 by elkan             #+#    #+#             */
-/*   Updated: 2026/01/19 02:43:41 by elkan            ###   ########.fr       */
+/*   Updated: 2026/01/19 13:38:01 by elkan            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 
 void	setup(int argc, char *argv[], char *envp[], t_pars *pars);
 void	setup_cmds(int argc, char *argv[], t_pars *pars);
-char	**cmd_array(char *cmd, int (is_sep)(char), char *path, char *cmd_word);
+char	**cmd_array(char *cmd, char *path, char *cmd_word, t_pars *pars);
 pid_t	child_last(char *cmd, char *envp[], int pip[2], int file2_fd);
 
 int	main(int argc, char *argv[], char *envp[])
@@ -32,17 +32,15 @@ int	main(int argc, char *argv[], char *envp[])
 	index = 0;
 	setup(argc, argv, envp, &pars);
 	pars.cmd_pid = malloc(pars.cmd_count * sizeof(pid_t));
-	pars.pipes = malloc((pars.cmd_count - 1) * sizeof(int[2]));
+	pars.pipes = malloc((pars.cmd_count - 1) * sizeof (int [2]));
 	if (pars.cmd_pid == NULL)
 		return (free_all(NULL, NULL, NULL, &pars), 1);
-	while (index < pars.cmd_count)
+	while (index < pars.cmd_count - 1)
 	{
 		if (pipe(pars.pipes[index]))
 			return (free_all(NULL, NULL, NULL, &pars), 1);
 		index++;
 	}
-	pars.cmd_pid[0] = first_cmd(argv[2], pars.file1_fd,
-		pars.pipes[0][1], &pars);
 	other_commands(argv, &pars);
 	if (WIFEXITED(pars.last_cmd_status))
 	{
@@ -73,18 +71,19 @@ void	setup(int argc, char *argv[], char *envp[], t_pars *pars)
 			last_cmd file2\n", 50);
 		exit (1);
 	}
-	pars->file2_fd = open_file2(argv, pars);
+	pars->file2_fd = open_file2(argc, argv, pars);
 	if (pars->here_doc)
 		pars->file1_fd = get_heredoc(argv[2]);
 	else
 		pars->file1_fd = open_file1(argv, pars);
+	pars->is_sep = is_sep;
 }
 
-char	**cmd_array(char *cmd, int (is_sep)(char), char *path, char *cmd_word)
+char	**cmd_array(char *cmd, char *path, char *cmd_word, t_pars *pars)
 {
 	char	**cmds;
 
-	cmds = ft_split_f(cmd, is_sep);
+	cmds = ft_split_f(cmd, pars->is_sep);
 	if (cmds == NULL)
 	{
 		free_all(path, cmds, cmd_word, NULL);

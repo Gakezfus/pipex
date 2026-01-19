@@ -6,7 +6,7 @@
 /*   By: elkan <elkan@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/15 12:57:56 by elkan             #+#    #+#             */
-/*   Updated: 2026/01/19 01:21:19 by elkan            ###   ########.fr       */
+/*   Updated: 2026/01/19 12:41:00 by elkan            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 char	*first_word(char *str, int (is_sep)(char));
 int		is_sep(char c);
 int		open_file1(char *argv[], t_pars *pars);
-int		open_file2(char *argv[], t_pars *pars);
+int		open_file2(int argc, char *argv[], t_pars *pars);
 void	free_all(char *path, char **cmds, char *cmd_word, t_pars *pars);
 
 char	*first_word(char *str, int (is_sep)(char))
@@ -57,14 +57,14 @@ int	open_file1(char *argv[], t_pars *pars)
 	return (to_return);
 }
 
-int	open_file2(char *argv[], t_pars *pars)
+int	open_file2(int argc, char *argv[], t_pars *pars)
 {
 	int	to_return;
 
 	if (pars->here_doc)
-		to_return = open(argv[5], O_WRONLY | O_CREAT | O_APPEND, 0666);
+		to_return = open(argv[argc - 1], O_WRONLY | O_CREAT | O_APPEND, 0666);
 	else
-		to_return = open(argv[4], O_WRONLY | O_CREAT | O_TRUNC, 0666);
+		to_return = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0666);
 	if (to_return < 0)
 	{
 		pars->error = 1;
@@ -79,7 +79,7 @@ void	free_all(char *path, char **cmds, char *cmd_word, t_pars *pars)
 	free(path);
 	free(cmd_word);
 	ft_free_arrays((void **)cmds);
-	if (pars && pars->cmd_count)
+	if (pars)
 	{
 		free(pars->pipes);
 		free(pars->cmd_pid);

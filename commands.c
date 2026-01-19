@@ -6,7 +6,7 @@
 /*   By: elkan <elkan@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/18 18:58:04 by elkan             #+#    #+#             */
-/*   Updated: 2026/01/19 03:04:56 by elkan            ###   ########.fr       */
+/*   Updated: 2026/01/19 13:39:18 by elkan            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,25 +27,22 @@ void	other_commands(char *argv[], t_pars *pars)
 {
 	int	index;
 
+	pars->cmd_pid[0] = first_cmd(argv[2], pars->file1_fd,
+			pars->pipes[0][1], pars);
+	close(pars->file1_fd);
 	index = 0;
 	while (index < pars->cmd_count - 2)
 	{
 		pars->cmd_pid[index + 1] = command(argv[3 + pars->here_doc + index],
-			pars->pipes[index], pars->pipes[index + 1][1], pars);
-		char *line = get_next_line(pars->pipes[index + 1][0]);
-		printf("%s\n", line);
-		index++;
-	}
-	pars->cmd_pid[index + 1] = command(argv[3 + pars->here_doc + index],
-		pars->pipes[index], pars->file2_fd, pars);
-	index = 0;
-	while (index < pars->cmd_count - 1)
-	{
+				pars->pipes[index], pars->pipes[index + 1][1], pars);
 		close(pars->pipes[index][0]);
 		close(pars->pipes[index][1]);
 		index++;
 	}
-	close(pars->file1_fd);
+	pars->cmd_pid[index + 1] = command(argv[3 + pars->here_doc + index],
+			pars->pipes[index], pars->file2_fd, pars);
+	close(pars->pipes[index][0]);
+	close(pars->pipes[index][1]);
 	close(pars->file2_fd);
 	index = 0;
 	while (index < pars->cmd_count)
@@ -66,12 +63,12 @@ pid_t	first_cmd(char *cmd, int read, int write, t_pars *pars)
 	if (child == 0)
 	{
 		cmd_word = first_word(cmd, is_sep);
-		path = get_path(cmd_word, pars->envp);
+		path = get_path(cmd_word, pars->envp, pars);
 		dup2(read, 0);
 		dup2(write, 1);
 		close(read);
 		close(write);
-		cmds = cmd_array(cmd, is_sep, path, cmd_word);
+		cmds = cmd_array(cmd, path, cmd_word, pars);
 		execve(path, cmds, pars->envp);
 		perror("execve");
 		free_all(path, cmds, cmd_word, pars);
@@ -91,16 +88,16 @@ pid_t	command(char *cmd, int read[2], int write, t_pars *pars)
 	if (child == 0)
 	{
 		cmd_word = first_word(cmd, is_sep);
-		path = get_path(cmd_word, pars->envp);
+		path = get_path(cmd_word, pars->envp, pars);
 		dup2(read[0], 0);
 		dup2(write, 1);
 		close(read[0]);
 		close(read[1]);
 		close(write);
-		cmds = cmd_array(cmd, is_sep, path, cmd_word);
+		cmds = cmd_array(cmd, path, cmd_word, pars);
 		execve(path, cmds, pars->envp);
 		perror("execve");
-		free_all(path, cmds, cmd_word, pars);
+		free_all(path, cmds, cmd_word, NULL);
 		exit (1);
 	}
 	return (child);

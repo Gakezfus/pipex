@@ -6,7 +6,7 @@
 /*   By: elkan <elkan@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 16:16:20 by Elkan Choo        #+#    #+#             */
-/*   Updated: 2026/01/19 01:06:42 by elkan            ###   ########.fr       */
+/*   Updated: 2026/01/19 13:39:43 by elkan            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,22 +25,23 @@ typedef struct pararms
 	int		(*pipes)[2];
 	char	*cmd_1;
 	char	*cmd_2;
-	char 	**envp;
+	char	**envp;
 	pid_t	*cmd_pid;
 	pid_t	last_cmd_status;
+	int		(*is_sep)(char);
 }	t_pars;
 
 // from pipex.c
-char	**cmd_array(char *cmd, int (is_sep)(char), char *path, char *cmd_word);
+char	**cmd_array(char *cmd, char *path, char *cmd_word, t_pars *pars);
 
 // from get_path.c
-char	*get_path(char *cmd, char *envp[]);
+char	*get_path(char *cmd, char *envp[], t_pars *pars);
 
 // from pipex_utils.c
 char	*first_word(char *str, int (is_sep)(char));
 int		is_sep(char c);
 int		open_file1(char *argv[], t_pars *pars);
-int		open_file2(char *argv[], t_pars *pars);
+int		open_file2(int argc, char *argv[], t_pars *pars);
 void	free_all(char *path, char **cmds, char *cmd_word, t_pars *pars);
 
 // from get_heredoc.c

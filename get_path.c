@@ -6,7 +6,7 @@
 /*   By: elkan <elkan@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 13:53:28 by Elkan Choo        #+#    #+#             */
-/*   Updated: 2026/01/19 01:21:39 by elkan            ###   ########.fr       */
+/*   Updated: 2026/01/19 12:42:03 by elkan            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char	*get_path(char *cmd, char *envp[]);
-char	*get_path2(char *cmd, char *envp[]);
+char	*get_path(char *cmd, char *envp[], t_pars *pars);
+char	*get_path2(char *cmd, char **envp, t_pars *pars);
 void	make_full_path(char **to_return, char *path, char *cmd);
 
-char	*get_path(char *cmd, char *envp[])
+char	*get_path(char *cmd, char *envp[], t_pars *pars)
 {
 	char	*to_return;
 
@@ -41,10 +41,10 @@ char	*get_path(char *cmd, char *envp[])
 		perror(cmd);
 		exit(1);
 	}
-	return (get_path2(cmd, envp));
+	return (get_path2(cmd, envp, pars));
 }
 
-char	*get_path2(char *cmd, char **envp)
+char	*get_path2(char *cmd, char **envp, t_pars *pars)
 {
 	int		index;
 	char	*to_return;
@@ -69,7 +69,7 @@ char	*get_path2(char *cmd, char **envp)
 		free(to_return);
 	}
 	dprintf(2, "%s: command not found\n", cmd);
-	free_all(cmd, path, NULL, NULL);
+	free_all(cmd, path, NULL, pars);
 	exit(127);
 }
 
