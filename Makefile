@@ -6,13 +6,12 @@
 #    By: elkan <elkan@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/01/12 21:52:11 by elkan             #+#    #+#              #
-#    Updated: 2026/01/19 03:06:54 by elkan            ###   ########.fr        #
+#    Updated: 2026/01/19 16:53:10 by elkan            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-# SOURCES = $(addprefix mand/, get_path.c pipex.c pipex_utils.c)
-
-SOURCES = get_path.c pipex.c pipex_utils.c get_heredoc.c commands.c
+SOURCES = $(addprefix src/,get_path.c pipex.c pipex_utils.c \
+get_heredoc.c commands.c)
 
 OBJECTS = $(SOURCES:%.c=%.o)
 
@@ -26,6 +25,8 @@ all: $(NAME)
 
 $(NAME): $(OBJECTS) $(LIBFT) pipex.h
 	cc $(OBJECTS) $(CFLAGS) $(LIBFT) -o $(NAME)
+
+bonus: $(NAME)
 
 $(LIBFT):
 	make -C libft
