@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_path.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: elkan <elkan@student.42.fr>                +#+  +:+       +#+        */
+/*   By: Elkan Choo <echoo@42mail.sutd.edu.sg>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/14 13:53:28 by Elkan Choo        #+#    #+#             */
-/*   Updated: 2026/01/19 12:42:03 by elkan            ###   ########.fr       */
+/*   Updated: 2026/01/20 15:36:16 by Elkan Choo       ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 char	*get_path(char *cmd, char *envp[], t_pars *pars);
 char	*get_path2(char *cmd, char **envp, t_pars *pars);
 void	make_full_path(char **to_return, char *path, char *cmd);
+void	check_empty(char *cmd, t_pars *pars);
 
 char	*get_path(char *cmd, char *envp[], t_pars *pars)
 {
@@ -41,6 +42,7 @@ char	*get_path(char *cmd, char *envp[], t_pars *pars)
 		perror(cmd);
 		exit(1);
 	}
+	check_empty(cmd, pars);
 	return (get_path2(cmd, envp, pars));
 }
 
@@ -51,9 +53,7 @@ char	*get_path2(char *cmd, char **envp, t_pars *pars)
 	char	**path;
 
 	while (ft_strncmp(*envp, "PATH=/", 6))
-	{
 		envp++;
-	}
 	path = ft_split(*envp + 5, ':');
 	index = 0;
 	while (path[index])
@@ -81,5 +81,15 @@ void	make_full_path(char **to_return, char *path, char *cmd)
 		write(2, "pipex: ", 7);
 		perror("ft_merge_strings");
 		exit(1);
+	}
+}
+
+void	check_empty(char *cmd, t_pars *pars)
+{
+	if (!*cmd)
+	{
+		dprintf(2, "'': command not found\n");
+		free_all(cmd, NULL, NULL, pars);
+		exit(127);
 	}
 }
